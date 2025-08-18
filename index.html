@@ -4,132 +4,79 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title>SKU Tävling</title>
+<title>Points Display with Leaderboard</title>
 <style>
-body {
-  font-family: 'Comic Sans MS', cursive, sans-serif;
-  background: linear-gradient(to right, #f4f4f4, #e0ffe0);
-  margin: 0;
-  padding: 0;
-}
-
-.container {
-  display: flex;
-  justify-content: space-between;
-  padding: 50px;
-}
-
-.main-content, .leaderboard {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-.main-content {
-  flex: 2;
-  margin-right: 20px;
-}
-
-.leaderboard {
-  flex: 1;
-  border-left: 5px dashed #78be20;
-}
-
-.number-box {
-  border: 2px solid #78be20;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  transition: transform 0.3s ease;
-  background-color: #f9fff9;
-}
-
-.number-box:hover {
-  transform: scale(1.03);
-  background-color: #eaffea;
-}
-
-.number {
-  font-size: 28px;
-  font-weight: bold;
-  color: #00205b;
-}
-
-.points {
-  font-size: 20px;
-  color: #555;
-}
-
-h1, h2 {
-  text-align: center;
-  color: #00205b;
-  font-size: 32px;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  font-size: 20px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  background-color: #f0f8ff;
-  padding: 10px;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
-}
-
-li:hover {
-  background-color: #d0f0d0;
-}
-
-form {
-  margin-top: 20px;
-  display: none;
-}
-
-input {
-  margin: 5px;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-button {
-  padding: 8px 12px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #78be20;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #c4d600;
-}
-
-.toggle-btn {
-  display: block;
-  margin: 10px auto;
-  background-color: #00205b;
-  color: white;
-  border: none;
-  cursor: pointer;
-  padding: 10px 15px;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
-}
-
-.toggle-btn:hover {
-  background-color: #0040a0;
-}
-</style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      display: flex;
+      justify-content: space-between;
+      padding: 50px;
+    }
+    .main-content, .leaderboard {
+      background-color: #fff;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .main-content {
+      flex: 2;
+      margin-right: 20px;
+    }
+    .leaderboard {
+      flex: 1;
+      border-left: 2px solid #ccc;
+    }
+    .number-box {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .number {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .points {
+      font-size: 18px;
+      color: #555;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      font-size: 18px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+    form {
+      margin-top: 20px;
+      display: none;
+    }
+    input {
+      margin: 5px;
+      padding: 5px;
+    }
+    button {
+      padding: 5px 10px;
+      margin-top: 10px;
+    }
+    .toggle-btn {
+      display: block;
+      margin: 10px auto;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 <div class="container">
@@ -161,148 +108,36 @@ button:hover {
 <div>Lowest Price: 0</div>
 </div>
 </div>
-<button class="toggle-btn" onclick="toggleForm('updateNumbersForm')">Edit Numbers</button>
-<form id="updateNumbersForm">
-<h3>Update Numbers</h3>
-<input id="num1" placeholder="Number 1" type="text"/>
-<input id="points1" placeholder="Points 1" type="number"/>
-<input id="link1" placeholder="Product Link 1" type="url"/>
-<input id="price1" placeholder="Lowest Price 1" type="number"/><br/>
-<input id="num2" placeholder="Number 2" type="text"/>
-<input id="points2" placeholder="Points 2" type="number"/>
-<input id="link2" placeholder="Product Link 2" type="url"/>
-<input id="price2" placeholder="Lowest Price 2" type="number"/><br/>
-<input id="num3" placeholder="Number 3" type="text"/>
-<input id="points3" placeholder="Points 3" type="number"/>
-<input id="link3" placeholder="Product Link 3" type="url"/>
-<input id="price3" placeholder="Lowest Price 3" type="number"/><br/>
-<input id="num4" placeholder="Number 4" type="text"/>
-<input id="points4" placeholder="Points 4" type="number"/>
-<input id="link4" placeholder="Product Link 4" type="url"/>
-<input id="price4" placeholder="Lowest Price 4" type="number"/><br/>
-<input id="numPassword" placeholder="Password" type="password"/>
-<button type="submit">Update</button>
-</form>
+
+
 </div>
 <div class="leaderboard">
-<h2>Leaderboard</h2>
+<h2>Leaderboard</h2><button class="toggle-btn" onclick="sortLeaderboard()">Sort Leaderboard</button>
 <ul id="leaderboardList">
 <li><span>Robin</span><span>0</span></li>
 <li><span>Adnan</span><span>5</span></li>
 </ul>
-<button class="toggle-btn" onclick="toggleForm('leaderboardForm')">Edit Leaderboard</button>
-<form id="leaderboardForm">
-<h3>Add or Update Entry</h3>
-<input id="name" placeholder="Name" type="text"/>
-<input id="score" placeholder="Score" type="number"/>
-<input id="leaderboardPassword" placeholder="Password" type="password"/>
-<button type="submit">Submit</button>
-</form>
+
+
 </div>
 </div>
 <script>
-    function toggleForm(formId) {
-      const form = document.getElementById(formId);
-      form.style.display = form.style.display === 'none' ? 'block' : 'none';
-    }
+function sortLeaderboard() {
+  const leaderboardList = document.getElementById('leaderboardList');
+  let entries = Array.from(leaderboardList.children).map(li => ({
+    name: li.children[0].textContent,
+    score: parseInt(li.children[1].textContent)
+  }));
 
-    const leaderboardForm = document.getElementById('leaderboardForm');
-    const leaderboardList = document.getElementById('leaderboardList');
+  entries.sort((a, b) => b.score - a.score);
 
-    leaderboardForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const name = document.getElementById('name').value.trim();
-      const score = parseInt(document.getElementById('score').value);
-      const password = document.getElementById('leaderboardPassword').value;
-
-      if (password !== 'outpost') {
-        alert('Incorrect password');
-        return;
-      }
-
-      if (!name || isNaN(score)) {
-        alert('Please enter a valid name and score.');
-        return;
-      }
-
-      let entries = Array.from(leaderboardList.children).map(li => ({
-        name: li.children[0].textContent,
-        score: parseInt(li.children[1].textContent)
-      }));
-
-      const existing = entries.find(entry => entry.name.toLowerCase() === name.toLowerCase());
-      if (existing) {
-        existing.score = score;
-      } else {
-        entries.push({ name, score });
-      }
-
-      entries.sort((a, b) => b.score - a.score);
-      const top10 = entries.slice(0, 10);
-
-      leaderboardList.innerHTML = '';
-      top10.forEach(entry => {
-        const li = document.createElement('li');
-        li.innerHTML = `<span>${entry.name}</span><span>${entry.score}</span>`;
-        leaderboardList.appendChild(li);
-      });
-
-      leaderboardForm.reset();
-    });
-
-    const updateNumbersForm = document.getElementById('updateNumbersForm');
-    const numbersDiv = document.getElementById('numbers');
-
-    updateNumbersForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const password = document.getElementById('numPassword').value;
-      if (password !== 'outpost') {
-        alert('Incorrect password');
-        return;
-      }
-
-      const nums = [
-        {
-          number: document.getElementById('num1').value,
-          points: document.getElementById('points1').value,
-          link: document.getElementById('link1').value,
-          price: document.getElementById('price1').value
-        },
-        {
-          number: document.getElementById('num2').value,
-          points: document.getElementById('points2').value,
-          link: document.getElementById('link2').value,
-          price: document.getElementById('price2').value
-        },
-        {
-          number: document.getElementById('num3').value,
-          points: document.getElementById('points3').value,
-          link: document.getElementById('link3').value,
-          price: document.getElementById('price3').value
-        },
-        {
-          number: document.getElementById('num4').value,
-          points: document.getElementById('points4').value,
-          link: document.getElementById('link4').value,
-          price: document.getElementById('price4').value
-        }
-      ];
-
-      numbersDiv.innerHTML = '';
-      nums.forEach(n => {
-        const box = document.createElement('div');
-        box.className = 'number-box';
-        box.innerHTML = `
-          <div class="number">${n.number}</div>
-          <div class="points">Points: ${n.points}</div>
-          <div><a href="${n.link}" target="_blank">Link</a></div>
-          <div>Lowest Price: ${n.price}</div>
-        `;
-        numbersDiv.appendChild(box);
-      });
-
-      updateNumbersForm.reset();
-    });
-  </script>
+  leaderboardList.innerHTML = '';
+  entries.forEach(entry => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span>${entry.name}</span><span>${entry.score}</span>`;
+    leaderboardList.appendChild(li);
+  });
+}
+</script>
 </body>
 </html>
