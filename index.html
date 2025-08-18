@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,76 +11,62 @@
       margin: 0;
       padding: 0;
     }
-
     .container {
       display: flex;
       justify-content: space-between;
       padding: 50px;
     }
-
     .main-content, .leaderboard {
       background-color: #fff;
       padding: 20px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
     .main-content {
       flex: 2;
       margin-right: 20px;
     }
-
     .leaderboard {
       flex: 1;
       border-left: 2px solid #ccc;
     }
-
     .number-box {
       border: 1px solid #ccc;
       padding: 20px;
       margin-bottom: 20px;
     }
-
     .number {
       font-size: 24px;
       font-weight: bold;
     }
-
     .points {
       font-size: 18px;
       color: #555;
     }
-
     h1, h2 {
       text-align: center;
     }
-
     ul {
       list-style: none;
       padding: 0;
     }
-
     li {
       font-size: 18px;
       margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
     }
-
     form {
       margin-top: 20px;
       display: none;
     }
-
     input {
       margin: 5px;
       padding: 5px;
     }
-
     button {
       padding: 5px 10px;
       margin-top: 10px;
     }
-
     .toggle-btn {
       display: block;
       margin: 10px auto;
@@ -99,16 +86,25 @@
           <div class="number">123456</div>
           <div class="points">Points: 50</div>
           <div><a href="#" target="_blank">Link</a></div>
+          <div>Lowest Price: 0</div>
         </div>
         <div class="number-box">
           <div class="number">654321</div>
           <div class="points">Points: 75</div>
           <div><a href="#" target="_blank">Link</a></div>
+          <div>Lowest Price: 0</div>
         </div>
         <div class="number-box">
           <div class="number">112233</div>
           <div class="points">Points: 100</div>
           <div><a href="#" target="_blank">Link</a></div>
+          <div>Lowest Price: 0</div>
+        </div>
+        <div class="number-box">
+          <div class="number">445566</div>
+          <div class="points">Points: 25</div>
+          <div><a href="#" target="_blank">Link</a></div>
+          <div>Lowest Price: 0</div>
         </div>
       </div>
 
@@ -117,13 +113,20 @@
         <h3>Update Numbers</h3>
         <input type="text" id="num1" placeholder="Number 1">
         <input type="number" id="points1" placeholder="Points 1">
-        <input type="url" id="link1" placeholder="Product Link 1"><br>
+        <input type="url" id="link1" placeholder="Product Link 1">
+        <input type="number" id="price1" placeholder="Lowest Price 1"><br>
         <input type="text" id="num2" placeholder="Number 2">
         <input type="number" id="points2" placeholder="Points 2">
-        <input type="url" id="link2" placeholder="Product Link 2"><br>
+        <input type="url" id="link2" placeholder="Product Link 2">
+        <input type="number" id="price2" placeholder="Lowest Price 2"><br>
         <input type="text" id="num3" placeholder="Number 3">
         <input type="number" id="points3" placeholder="Points 3">
-        <input type="url" id="link3" placeholder="Product Link 3"><br>
+        <input type="url" id="link3" placeholder="Product Link 3">
+        <input type="number" id="price3" placeholder="Lowest Price 3"><br>
+        <input type="text" id="num4" placeholder="Number 4">
+        <input type="number" id="points4" placeholder="Points 4">
+        <input type="url" id="link4" placeholder="Product Link 4">
+        <input type="number" id="price4" placeholder="Lowest Price 4"><br>
         <input type="password" id="numPassword" placeholder="Password">
         <button type="submit">Update</button>
       </form>
@@ -131,10 +134,9 @@
 
     <div class="leaderboard">
       <h2>Leaderboard</h2>
-    <ul id="leaderboardList">
-  <li><span>Robin</span><span>0</span></li>
-    </ul>
-
+      <ul id="leaderboardList">
+        <li><span>Robin</span><span>0</span></li>
+      </ul>
 
       <button class="toggle-btn" onclick="toggleForm('leaderboardForm')">Edit Leaderboard</button>
       <form id="leaderboardForm">
@@ -212,17 +214,26 @@
         {
           number: document.getElementById('num1').value,
           points: document.getElementById('points1').value,
-          link: document.getElementById('link1').value
+          link: document.getElementById('link1').value,
+          price: document.getElementById('price1').value
         },
         {
           number: document.getElementById('num2').value,
           points: document.getElementById('points2').value,
-          link: document.getElementById('link2').value
+          link: document.getElementById('link2').value,
+          price: document.getElementById('price2').value
         },
         {
           number: document.getElementById('num3').value,
           points: document.getElementById('points3').value,
-          link: document.getElementById('link3').value
+          link: document.getElementById('link3').value,
+          price: document.getElementById('price3').value
+        },
+        {
+          number: document.getElementById('num4').value,
+          points: document.getElementById('points4').value,
+          link: document.getElementById('link4').value,
+          price: document.getElementById('price4').value
         }
       ];
 
@@ -234,6 +245,7 @@
           <div class="number">${n.number}</div>
           <div class="points">Points: ${n.points}</div>
           <div><a href="${n.link}" target="_blank">Link</a></div>
+          <div>Lowest Price: ${n.price}</div>
         `;
         numbersDiv.appendChild(box);
       });
