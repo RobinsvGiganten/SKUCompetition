@@ -49,7 +49,7 @@
       color: #555;
     }
 
-    .leaderboard h2, .main-content h1 {
+    h1, h2 {
       text-align: center;
     }
 
@@ -67,6 +67,7 @@
 
     form {
       margin-top: 20px;
+      display: none;
     }
 
     input {
@@ -76,6 +77,16 @@
 
     button {
       padding: 5px 10px;
+      margin-top: 10px;
+    }
+
+    .toggle-btn {
+      display: block;
+      margin: 10px auto;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -98,6 +109,7 @@
         </div>
       </div>
 
+      <button class="toggle-btn" onclick="toggleForm('updateNumbersForm')">Edit Numbers</button>
       <form id="updateNumbersForm">
         <h3>Update Numbers</h3>
         <input type="text" id="num1" placeholder="Number 1">
@@ -119,93 +131,94 @@
         <li><span>Charlie</span><span>95</span></li>
       </ul>
 
+      <button class="toggle-btn" onclick="toggleForm('leaderboardForm')">Edit Leaderboard</button>
       <form id="leaderboardForm">
-        <h3>Add to Leaderboard</h3>
+        <h3>Add or Update Entry</h3>
         <input type="text" id="name" placeholder="Name">
         <input type="number" id="score" placeholder="Score">
         <input type="password" id="leaderboardPassword" placeholder="Password">
-        <button type="submit">Add</button>
+        <button type="submit">Submit</button>
       </form>
     </div>
   </div>
 
- <script>
-  const leaderboardForm = document.getElementById('leaderboardForm');
-  const leaderboardList = document.getElementById('leaderboardList');
-
-  leaderboardForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const name = document.getElementById('name').value.trim();
-    const score = parseInt(document.getElementById('score').value);
-    const password = document.getElementById('leaderboardPassword').value;
-
-    if (password !== 'outpost') {
-      alert('Incorrect password');
-      return;
+  <script>
+    function toggleForm(formId) {
+      const form = document.getElementById(formId);
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
     }
 
-    if (!name || isNaN(score)) {
-      alert('Please enter a valid name and score.');
-      return;
-    }
+    const leaderboardForm = document.getElementById('leaderboardForm');
+    const leaderboardList = document.getElementById('leaderboardList');
 
-    // Get current entries
-    let entries = Array.from(leaderboardList.children).map(li => ({
-      name: li.children[0].textContent,
-      score: parseInt(li.children[1].textContent)
-    }));
+    leaderboardForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const score = parseInt(document.getElementById('score').value);
+      const password = document.getElementById('leaderboardPassword').value;
 
-    // Check if name exists
-    const existing = entries.find(entry => entry.name.toLowerCase() === name.toLowerCase());
-    if (existing) {
-      existing.score = score; // Update score
-    } else {
-      entries.push({ name, score }); // Add new entry
-    }
+      if (password !== 'outpost') {
+        alert('Incorrect password');
+        return;
+      }
 
-    // Sort and limit to top 10
-    entries.sort((a, b) => b.score - a.score);
-    const top10 = entries.slice(0, 10);
+      if (!name || isNaN(score)) {
+        alert('Please enter a valid name and score.');
+        return;
+      }
 
-    // Update leaderboard
-    leaderboardList.innerHTML = '';
-    top10.forEach(entry => {
-      const li = document.createElement('li');
-      li.innerHTML = `<span>${entry.name}</span><span>${entry.score}</span>`;
-      leaderboardList.appendChild(li);
+      let entries = Array.from(leaderboardList.children).map(li => ({
+        name: li.children[0].textContent,
+        score: parseInt(li.children[1].textContent)
+      }));
+
+      const existing = entries.find(entry => entry.name.toLowerCase() === name.toLowerCase());
+      if (existing) {
+        existing.score = score;
+      } else {
+        entries.push({ name, score });
+      }
+
+      entries.sort((a, b) => b.score - a.score);
+      const top10 = entries.slice(0, 10);
+
+      leaderboardList.innerHTML = '';
+      top10.forEach(entry => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${entry.name}</span><span>${entry.score}</span>`;
+        leaderboardList.appendChild(li);
+      });
+
+      leaderboardForm.reset();
     });
 
-    leaderboardForm.reset();
-  });
+    const updateNumbersForm = document.getElementById('updateNumbersForm');
+    const numbersDiv = document.getElementById('numbers');
 
-  const updateNumbersForm = document.getElementById('updateNumbersForm');
-  const numbersDiv = document.getElementById('numbers');
+    updateNumbersForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const password = document.getElementById('numPassword').value;
+      if (password !== 'outpost') {
+        alert('Incorrect password');
+        return;
+      }
 
-  updateNumbersForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const password = document.getElementById('numPassword').value;
-    if (password !== 'outpost') {
-      alert('Incorrect password');
-      return;
-    }
+      const nums = [
+        { number: document.getElementById('num1').value, points: document.getElementById('points1').value },
+        { number: document.getElementById('num2').value, points: document.getElementById('points2').value },
+        { number: document.getElementById('num3').value, points: document.getElementById('points3').value }
+      ];
 
-    const nums = [
-      { number: document.getElementById('num1').value, points: document.getElementById('points1').value },
-      { number: document.getElementById('num2').value, points: document.getElementById('points2').value },
-      { number: document.getElementById('num3').value, points: document.getElementById('points3').value }
-    ];
+      numbersDiv.innerHTML = '';
+      nums.forEach(n => {
+        const box = document.createElement('div');
+        box.className = 'number-box';
+        box.innerHTML = `<div class="number">${n.number}</div><div class="points">Points: ${n.points}</div>`;
+        numbersDiv.appendChild(box);
+      });
 
-    numbersDiv.innerHTML = '';
-    nums.forEach(n => {
-      const box = document.createElement('div');
-      box.className = 'number-box';
-      box.innerHTML = `<div class="number">${n.number}</div><div class="points">Points: ${n.points}</div>`;
-      numbersDiv.appendChild(box);
+      updateNumbersForm.reset();
     });
-
-    updateNumbersForm.reset();
-  });
-</script>
-
+  </script>
 </body>
 </html>
