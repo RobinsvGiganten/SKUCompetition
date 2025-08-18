@@ -201,6 +201,13 @@ button:hover {
 .toggle-btn:hover {
   background-color: #0040a0;
 }
+</style><style>
+.tvatt-field {
+    margin-left: 20px;
+    font-weight: bold;
+    color: #8DC63F;
+    font-size: 1.2em;
+}
 </style></head>
 <body>
 <div class="container">
@@ -208,28 +215,28 @@ button:hover {
 <h1>Points Overview</h1>
 <div id="numbers">
 <div class="number-box">
-<div class="number">123456</div>
-<div class="points">Points: 50</div>
-<div><a href="#" target="_blank">Link</a></div>
-<div>Lowest Price: 0</div>
-</div>
-<div class="number-box">
-<div class="number">654321</div>
-<div class="points">Points: 75</div>
-<div><a href="#" target="_blank">Link</a></div>
-<div>Lowest Price: 0</div>
-</div>
-<div class="number-box">
-<div class="number">112233</div>
-<div class="points">Points: 100</div>
-<div><a href="#" target="_blank">Link</a></div>
-<div>Lowest Price: 0</div>
-</div>
-<div class="number-box">
-<div class="number">445566</div>
+<div class="number">419960: Cylinda Diskmaskin DM3220D (vit)</div>
 <div class="points">Points: 25</div>
-<div><a href="#" target="_blank">Link</a></div>
-<div>Lowest Price: 0</div>
+<div><a href="https://www.elgiganten.se/product/outlet/cylinda-diskmaskin-dm3220d-vit/419960" target="_blank">Link</a></div>
+<div>Lowest Price: 4956</div>
+</div>
+<div class="number-box">
+<div class="number">937176: Cylinda Tvättmaskin FT4494MA (9kg)</div>
+<div class="points">Points: 25</div>
+<div><a href="https://www.elgiganten.se/product/outlet/cylinda-tvattmaskin-ft4494ma-9kg/937176" target="_blank">Link</a></div>
+<div>Lowest Price: 8995</div>
+</div>
+<div class="number-box">
+<div class="number">892980: Electrolux Serie 700 Torktumlare EDI7H1E85E (8kg)</div>
+<div class="points">Points: 35</div>
+<div><a href="www.elgiganten.se/product/outlet/cylinda-tvattmaskin-ft4494ma-9kg/937176" target="_blank">Link</a></div>
+<div>Lowest Price: 8995</div>
+</div>
+<div class="number-box">
+<div class="number">200612: Miele Induktionshäll KM7575FL (80cm)</div>
+<div class="points">Points: 100</div>
+<div><a href="https://www.elgiganten.se/product/outlet/miele-induktionshall-km7575fl-80cm/200612" target="_blank">Link</a></div>
+<div>Lowest Price: 19496</div>
 </div>
 </div>
 </div>
@@ -237,6 +244,14 @@ button:hover {
 <h2>Leaderboard</h2><button class="toggle-btn" onclick="sortLeaderboard()">Sort Leaderboard</button>
 <ul id="leaderboardList">
 <li><span>Robin</span><span>0</span></li>
+<li><span>Adnan</span><span>0</span></li>
+<li><span>Gente</span><span>0</span></li>
+<li><span>Moa</span><span>0</span></li>
+<li><span>Lukas</span><span>0</span></li>
+<li><span>Alfred</span><span>0</span></li>
+<li><span>Anton</span><span>0</span></li>
+<li><span>Adam</span><span>0</span></li>
+<li><span>William</span><span>0</span></li>
 </ul>
 </div>
 </div>
@@ -258,5 +273,108 @@ function sortLeaderboard() {
   });
 }
 </script>
-</body>
+<script>
+    function toggleForm(formId) {
+      const form = document.getElementById(formId);
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    const leaderboardForm = document.getElementById('leaderboardForm');
+    const leaderboardList = document.getElementById('leaderboardList');
+
+    leaderboardForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const score = parseInt(document.getElementById('score').value);
+      const password = document.getElementById('leaderboardPassword').value;
+
+      if (password !== 'outpost') {
+        alert('Incorrect password');
+        return;
+      }
+
+      if (!name || isNaN(score)) {
+        alert('Please enter a valid name and score.');
+        return;
+      }
+
+      let entries = Array.from(leaderboardList.children).map(li => ({
+        name: li.children[0].textContent,
+        score: parseInt(li.children[1].textContent)
+      }));
+
+      const existing = entries.find(entry => entry.name.toLowerCase() === name.toLowerCase());
+      if (existing) {
+        existing.score = score;
+      } else {
+        entries.push({ name, score });
+      }
+
+      entries.sort((a, b) => b.score - a.score);
+      const top10 = entries.slice(0, 10);
+
+      leaderboardList.innerHTML = '';
+      top10.forEach(entry => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${entry.name}</span><span>${entry.score}</span>`;
+        leaderboardList.appendChild(li);
+      });
+
+      leaderboardForm.reset();
+    });
+
+    const updateNumbersForm = document.getElementById('updateNumbersForm');
+    const numbersDiv = document.getElementById('numbers');
+
+    updateNumbersForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const password = document.getElementById('numPassword').value;
+      if (password !== 'outpost') {
+        alert('Incorrect password');
+        return;
+      }
+
+      const nums = [
+        {
+          number: document.getElementById('num1').value,
+          points: document.getElementById('points1').value,
+          link: document.getElementById('link1').value,
+          price: document.getElementById('price1').value
+        },
+        {
+          number: document.getElementById('num2').value,
+          points: document.getElementById('points2').value,
+          link: document.getElementById('link2').value,
+          price: document.getElementById('price2').value
+        },
+        {
+          number: document.getElementById('num3').value,
+          points: document.getElementById('points3').value,
+          link: document.getElementById('link3').value,
+          price: document.getElementById('price3').value
+        },
+        {
+          number: document.getElementById('num4').value,
+          points: document.getElementById('points4').value,
+          link: document.getElementById('link4').value,
+          price: document.getElementById('price4').value
+        }
+      ];
+
+      numbersDiv.innerHTML = '';
+      nums.forEach(n => {
+        const box = document.createElement('div');
+        box.className = 'number-box';
+        box.innerHTML = `
+          <div class="number">${n.number}</div>
+          <div class="points">Points: ${n.points}</div>
+          <div><a href="${n.link}" target="_blank">Link</a></div>
+          <div>Lowest Price: ${n.price}</div>
+        `;
+        numbersDiv.appendChild(box);
+      });
+
+      updateNumbersForm.reset();
+    });
+  </script></body>
 </html>
