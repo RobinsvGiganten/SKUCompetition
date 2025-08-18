@@ -4,106 +4,163 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title>Points Display with Leaderboard</title>
+<title>SKU Tävling</title>
 <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      display: flex;
-      justify-content: space-between;
-      padding: 50px;
-    }
-    .main-content, .leaderboard {
-      background-color: #ffffff;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .main-content {
-      flex: 2;
-      margin-right: 20px;
-    }
-    .leaderboard {
-      flex: 1;
-      border-left: 2px solid #c4d600;
-    }
-    .number-box {
-      border: 1px solid #c4d600;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .number {
-      font-size: 24px;
-      font-weight: bold;
-    }
-    .points {
-      font-size: 18px;
-      color: #00205b;
-    }
-    h1, h2 {
-      text-align: center;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    li {
-      font-size: 18px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-    }
-    form {
-      margin-top: 20px;
-      display: none;
-    }
-    input {
-      margin: 5px;
-      padding: 5px;
-    }
-    button {
-      padding: 5px 10px;
-      margin-top: 10px;
-    }
-    .toggle-btn {
-      display: block;
-      margin: 10px auto;
-      background-color: #78be20;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-  
-h1, h2 { color: #00205b; }</style>
+body {
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  background: linear-gradient(to right, #f4f4f4, #e0ffe0);
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  padding: 50px;
+}
+
+.main-content, .leaderboard {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.main-content {
+  flex: 2;
+  margin-right: 20px;
+}
+
+.leaderboard {
+  flex: 1;
+  border-left: 5px dashed #78be20;
+}
+
+.number-box {
+  border: 2px solid #78be20;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+  background-color: #f9fff9;
+}
+
+.number-box:hover {
+  transform: scale(1.03);
+  background-color: #eaffea;
+}
+
+.number {
+  font-size: 28px;
+  font-weight: bold;
+  color: #00205b;
+}
+
+.points {
+  font-size: 20px;
+  color: #555;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #00205b;
+  font-size: 32px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  font-size: 20px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  background-color: #f0f8ff;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+li:hover {
+  background-color: #d0f0d0;
+}
+
+form {
+  margin-top: 20px;
+  display: none;
+}
+
+input {
+  margin: 5px;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+button {
+  padding: 8px 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #78be20;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #c4d600;
+}
+
+.toggle-btn {
+  display: block;
+  margin: 10px auto;
+  background-color: #00205b;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 10px 15px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-btn:hover {
+  background-color: #0040a0;
+}
+</style>
 </head>
 <body>
 <div class="container">
 <div class="main-content">
 <h1>Points Overview</h1>
-<div id="numbers"><div class="number-box">
+<div id="numbers">
+<div class="number-box">
 <div class="number">123456</div>
 <div class="points">Points: 50</div>
 <div><a href="#" target="_blank">Link</a></div>
 <div>Lowest Price: 0</div>
-</div><div class="number-box">
+</div>
+<div class="number-box">
 <div class="number">654321</div>
 <div class="points">Points: 75</div>
 <div><a href="#" target="_blank">Link</a></div>
 <div>Lowest Price: 0</div>
-</div><div class="number-box">
+</div>
+<div class="number-box">
 <div class="number">112233</div>
 <div class="points">Points: 100</div>
 <div><a href="#" target="_blank">Link</a></div>
 <div>Lowest Price: 0</div>
-</div><div class="number-box">
+</div>
+<div class="number-box">
 <div class="number">445566</div>
 <div class="points">Points: 25</div>
 <div><a href="#" target="_blank">Link</a></div>
 <div>Lowest Price: 0</div>
-</div></div>
+</div>
+</div>
 <button class="toggle-btn" onclick="toggleForm('updateNumbersForm')">Edit Numbers</button>
 <form id="updateNumbersForm">
 <h3>Update Numbers</h3>
@@ -129,7 +186,9 @@ h1, h2 { color: #00205b; }</style>
 </div>
 <div class="leaderboard">
 <h2>Leaderboard</h2>
-<ul id="leaderboardList"><li><span>Robin</span><span>0</span></li></ul>
+<ul id="leaderboardList">
+<li><span>Robin</span><span>0</span></li>
+</ul>
 <button class="toggle-btn" onclick="toggleForm('leaderboardForm')">Edit Leaderboard</button>
 <form id="leaderboardForm">
 <h3>Add or Update Entry</h3>
