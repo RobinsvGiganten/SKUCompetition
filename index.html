@@ -129,68 +129,83 @@
     </div>
   </div>
 
-  <script>
-    const leaderboardForm = document.getElementById('leaderboardForm');
-    const leaderboardList = document.getElementById('leaderboardList');
+ <script>
+  const leaderboardForm = document.getElementById('leaderboardForm');
+  const leaderboardList = document.getElementById('leaderboardList');
 
-    leaderboardForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const name = document.getElementById('name').value;
-      const score = parseInt(document.getElementById('score').value);
-      const password = document.getElementById('leaderboardPassword').value;
+  leaderboardForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const score = parseInt(document.getElementById('score').value);
+    const password = document.getElementById('leaderboardPassword').value;
 
-      if (password !== 'outpost') {
-        alert('Incorrect password');
-        return;
-      }
+    if (password !== 'outpost') {
+      alert('Incorrect password');
+      return;
+    }
 
-      const newEntry = { name, score };
-      const entries = Array.from(leaderboardList.children).map(li => ({
-        name: li.children[0].textContent,
-        score: parseInt(li.children[1].textContent)
-      }));
+    if (!name || isNaN(score)) {
+      alert('Please enter a valid name and score.');
+      return;
+    }
 
-      entries.push(newEntry);
-      entries.sort((a, b) => b.score - a.score);
-      const top10 = entries.slice(0, 10);
+    // Get current entries
+    let entries = Array.from(leaderboardList.children).map(li => ({
+      name: li.children[0].textContent,
+      score: parseInt(li.children[1].textContent)
+    }));
 
-      leaderboardList.innerHTML = '';
-      top10.forEach(entry => {
-        const li = document.createElement('li');
-        li.innerHTML = `<span>${entry.name}</span><span>${entry.score}</span>`;
-        leaderboardList.appendChild(li);
-      });
+    // Check if name exists
+    const existing = entries.find(entry => entry.name.toLowerCase() === name.toLowerCase());
+    if (existing) {
+      existing.score = score; // Update score
+    } else {
+      entries.push({ name, score }); // Add new entry
+    }
 
-      leaderboardForm.reset();
+    // Sort and limit to top 10
+    entries.sort((a, b) => b.score - a.score);
+    const top10 = entries.slice(0, 10);
+
+    // Update leaderboard
+    leaderboardList.innerHTML = '';
+    top10.forEach(entry => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span>${entry.name}</span><span>${entry.score}</span>`;
+      leaderboardList.appendChild(li);
     });
 
-    const updateNumbersForm = document.getElementById('updateNumbersForm');
-    const numbersDiv = document.getElementById('numbers');
+    leaderboardForm.reset();
+  });
 
-    updateNumbersForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const password = document.getElementById('numPassword').value;
-      if (password !== 'outpost') {
-        alert('Incorrect password');
-        return;
-      }
+  const updateNumbersForm = document.getElementById('updateNumbersForm');
+  const numbersDiv = document.getElementById('numbers');
 
-      const nums = [
-        { number: document.getElementById('num1').value, points: document.getElementById('points1').value },
-        { number: document.getElementById('num2').value, points: document.getElementById('points2').value },
-        { number: document.getElementById('num3').value, points: document.getElementById('points3').value }
-      ];
+  updateNumbersForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const password = document.getElementById('numPassword').value;
+    if (password !== 'outpost') {
+      alert('Incorrect password');
+      return;
+    }
 
-      numbersDiv.innerHTML = '';
-      nums.forEach(n => {
-        const box = document.createElement('div');
-        box.className = 'number-box';
-        box.innerHTML = `<div class="number">${n.number}</div><div class="points">Points: ${n.points}</div>`;
-        numbersDiv.appendChild(box);
-      });
+    const nums = [
+      { number: document.getElementById('num1').value, points: document.getElementById('points1').value },
+      { number: document.getElementById('num2').value, points: document.getElementById('points2').value },
+      { number: document.getElementById('num3').value, points: document.getElementById('points3').value }
+    ];
 
-      updateNumbersForm.reset();
+    numbersDiv.innerHTML = '';
+    nums.forEach(n => {
+      const box = document.createElement('div');
+      box.className = 'number-box';
+      box.innerHTML = `<div class="number">${n.number}</div><div class="points">Points: ${n.points}</div>`;
+      numbersDiv.appendChild(box);
     });
-  </script>
+
+    updateNumbersForm.reset();
+  });
+</script>
+
 </body>
 </html>
