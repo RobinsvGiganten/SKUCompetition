@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Memory Match – Custom Combos</title>
+  <title>Memory Match – Custom Combos (Regenerated)</title>
   <style>
     :root{ --bg:#0f1221; --panel:#151a2e; --text:#e6e9ff; --muted:#9aa4bf; }
     *{box-sizing:border-box}
@@ -33,9 +33,8 @@
     .front{ background:linear-gradient(180deg,#22284b,#1a1f3f) }
     .back{ background:linear-gradient(180deg,#202646,#1a1f3b); transform:rotateY(180deg); padding:12px; text-align:center }
     .label{font-weight:700; font-size:clamp(14px,1.5vw,18px)}
-    .sub{font-size:.9rem; opacity:.85}
     .imgwrap{ width:100%; height:100%; display:grid; place-items:center }
-    .imgwrap svg{ width:70%; height:70% }
+    .imgwrap svg, .imgwrap img{ width:70%; height:70%; object-fit:contain }
     .matched .front{ border-color:#2d9d7c; box-shadow:0 10px 24px rgba(45,157,124,.35) }
 
     footer{opacity:.7; margin:24px 0 36px; font-size:.9rem}
@@ -85,7 +84,7 @@
   </dialog>
 
   <footer>
-    <p>Custom combos + popups supported. Keyboard: Tab to focus, Enter/Space to flip.</p>
+    <p>Custom combos + popups. Keyboard: Tab to focus, Enter/Space to flip.</p>
   </footer>
 
   <script>
@@ -95,72 +94,87 @@
     const timeEl = document.querySelector('#time b');
     const bestEl = document.querySelector('#best b');
     const restartBtn = document.getElementById('restart');
+
     const dlgWin = document.getElementById('win');
     const playAgain = document.getElementById('playAgain');
     const closeWin = document.getElementById('closeWin');
+
     const dlgCombo = document.getElementById('combo');
     const comboTextEl = document.getElementById('comboText');
     const comboOk = document.getElementById('comboOk');
 
-    // === Content library ===
+    // ===== Content library =====
+    // Text items
     const Items = {
-      // Text pairs
-      TL: { id:'TL', type:'text', title:'Transformellt Ledarskap' },
-      II: { id:'II', type:'text', title:'Idealiserat Inflytande' },
-      GM: { id:'GM', type:'text', title:'Growth Mindset' },
-      FM: { id:'FM', type:'text', title:'Fixed Mindsset' },
+      TL:   { id:'TL',   type:'text', title:'Transformellt Ledarskap' },
+      II:   { id:'II',   type:'text', title:'Idealiserat Inflytande' },
+      GM:   { id:'GM',   type:'text', title:'Growth Mindset' },
+      FM:   { id:'FM',   type:'text', title:'Fixed Mindsset' },
+      N3:   { id:'N3',   type:'text', title:'3' },
+      N1:   { id:'N1',   type:'text', title:'1' },
+      APPR: { id:'APPR', type:'text', title:'Appreciative' },
+      INQ:  { id:'INQ',  type:'text', title:'Inquiry' },
 
-      // Image pairs (SVG placeholders)
-      CHANT: { id:'CHANT', type:'svg', render: svgChanterelle },
-      EYE:   { id:'EYE',   type:'svg', render: svgEye },
-      LBELT: { id:'LBELT', type:'svg', render: svgLeatherBelt },
-      HAMR:  { id:'HAMR',  type:'svg', render: svgHammer },
-      CARR:  { id:'CARR',  type:'svg', render: svgCarriage },
-      HUN:   { id:'HUN',   type:'svg', render: svgHungaryFlag },
+      // Image items (SVG placeholders; swap to type:'img' + src to use real images)
+      CHANT:{ id:'CHANT',type:'svg', render: svgChanterelle },
+      EYE:  { id:'EYE',  type:'svg', render: svgEye },
+      LBELT:{ id:'LBELT',type:'svg', render: svgLeatherBelt },
+      HAMR: { id:'HAMR', type:'svg', render: svgHammer },
+      CARR: { id:'CARR', type:'svg', render: svgCarriage },
+      HUN:  { id:'HUN',  type:'svg', render: svgHungaryFlag },
+      MAP:  { id:'MAP',  type:'svg', render: svgMap },
+      DUMB: { id:'DUMB', type:'svg', render: svgDumbbells },
     };
 
-    // Define combos and their popup messages
+    // Pairs to match (unordered) – update here to add/remove combos
     const Combos = [
       ['TL','II'],
       ['CHANT','EYE'],
       ['LBELT','HAMR'],
       ['CARR','HUN'],
       ['GM','FM'],
+      ['N3','N1'],
+      ['MAP','DUMB'],
+      ['APPR','INQ'],
     ];
 
+    // Popup text for each combo
     const comboKey = (a,b)=> [a,b].sort().join('|');
-    const comboSet = new Set(Combos.map(([a,b])=>comboKey(a,b)));
-
     const ComboPopupText = new Map([
-      [comboKey('TL','II'), `Hitta vad som driver och utvecklar varje individ. Anpassa ditt ledarskap utefter din grupp`],
-      [comboKey('CHANT','EYE'), `Den inställningen du har till ett problem påverkar hur enkelt du löser ett problem`],
-      [comboKey('LBELT','HAMR'), `Vilka verktyg har du för att leda dina medarbetare, verktyg behövs slips och ersättas ibland.`],
-      [comboKey('CARR','HUN'), `Coaching, medarbetaren kommer fram till sin egen lösning.`],
-      [comboKey('GM','FM'), `Se möjligheter för att utvecklas, stanna inte i gamla vanor!`],
+      [comboKey('TL','II'),   'Hitta vad som driver och utvecklar varje individ. Anpassa ditt ledarskap utefter din grupp'],
+      [comboKey('CHANT','EYE'),'Den inställningen du har till ett problem påverkar hur enkelt du löser ett problem'],
+      [comboKey('LBELT','HAMR'),'Vilka verktyg har du för att leda dina medarbetare, verktyg behövs slipas och ersättas ibland.'],
+      [comboKey('CARR','HUN'), 'Coaching, medarbetaren kommer fram till sin egen lösning.'],
+      [comboKey('GM','FM'),   'Se möjligheter för att utvecklas, stanna inte i gamla vanor!'],
+      [comboKey('N3','N1'),   '3 positivt tar ut 1 negativt'],
+      [comboKey('MAP','DUMB'),'Kartlägga styrkor, hitta dina egna styrkor och anpassa ditt ledarskap för att passa dig själv. Identifiera dina svagheter och kom fram till en förbättringsplan'],
+      [comboKey('APPR','INQ'),'Se problem från problem från en positiv infallsvinkel, då blir dom enklare att lösa'],
     ]);
 
+    const comboSet = new Set([...ComboPopupText.keys()]);
+
+    // ===== Game state =====
     let first=null, second=null, lock=false, matches=0, moves=0, started=false, secs=0, timer=null;
     const totalCards = Combos.length * 2;
 
-    function format(s){ const m=Math.floor(s/60).toString().padStart(2,'0'); const r=(s%60).toString().padStart(2,'0'); return `${m}:${r}`; }
-    function startTimer(){ if(timer) return; timer=setInterval(()=>{ secs++; timeEl.textContent=format(secs); }, 1000); }
-    function stopTimer(){ clearInterval(timer); timer=null; }
-    function resetTimer(){ stopTimer(); secs=0; timeEl.textContent='00:00'; }
-    function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
+    // ===== Utils =====
+    const format=(s)=>{ const m=Math.floor(s/60).toString().padStart(2,'0'); const r=(s%60).toString().padStart(2,'0'); return `${m}:${r}`; };
+    const startTimer=()=>{ if(timer) return; timer=setInterval(()=>{ secs++; timeEl.textContent=format(secs); },1000); };
+    const stopTimer=()=>{ if(timer){ clearInterval(timer); timer=null; } };
+    const resetTimer=()=>{ stopTimer(); secs=0; timeEl.textContent='00:00'; };
+    const shuffle=(arr)=>{ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; };
 
+    // ===== Deck & Render =====
     function buildDeck(){
-      const ids = Combos.flat();
-      const deck = shuffle(ids.slice()).map((id, idx)=>({ key: id+':'+idx+Math.random().toString(16).slice(2,6), id }));
+      const ids = Combos.flat(); // one entry per card
+      const deck = shuffle(ids.slice()).map((id, idx)=>({ key:`${id}:${idx}:${Math.random().toString(16).slice(2,6)}`, id }));
       return deck;
     }
 
     function renderCardContent(item){
-      if(item.type==='text'){
-        return `<div class="label">${item.title}</div>`;
-      }
-      if(item.type==='svg' && typeof item.render==='function'){
-        return `<div class="imgwrap">${item.render()}</div>`;
-      }
+      if(item.type==='text') return `<div class="label">${item.title}</div>`;
+      if(item.type==='img' && item.src) return `<div class="imgwrap"><img src="${item.src}" alt="${item.alt||''}"></div>`;
+      if(item.type==='svg' && typeof item.render==='function') return `<div class="imgwrap">${item.render()}</div>`;
       return '<div class="label">?</div>';
     }
 
@@ -185,6 +199,7 @@
     function setFlipped(btn, on){ btn.classList.toggle('is-flipped', on); btn.setAttribute('aria-pressed', on?'true':'false'); }
     function bumpMoves(){ moves++; movesEl.textContent = moves; }
 
+    // ===== Game flow =====
     function flip(btn){
       if(lock) return; if(btn.classList.contains('is-flipped')) return;
       setFlipped(btn, true);
@@ -198,9 +213,11 @@
       if(comboSet.has(key)){
         first.classList.add('matched');
         second.classList.add('matched');
-        // Show combo popup
+
+        // Show combo popup (non-blocking of game state)
         const msg = ComboPopupText.get(key);
         if(msg){ comboTextEl.textContent = msg; dlgCombo.showModal(); }
+
         first = second = null; lock=false; matches += 2;
         if(matches === totalCards){ win(); }
       } else {
@@ -234,12 +251,13 @@
       updateBestLabel();
     }
 
+    // Buttons
     restartBtn.addEventListener('click', reset);
-    playAgain?.addEventListener('click', ()=>{ dlgWin.close(); reset(); });
-    closeWin?.addEventListener('click', ()=> dlgWin.close());
+    playAgain.addEventListener('click', ()=>{ dlgWin.close(); reset(); });
+    closeWin.addEventListener('click', ()=> dlgWin.close());
     comboOk.addEventListener('click', ()=> dlgCombo.close());
 
-    // ===== Inline SVG icon generators =====
+    // ===== SVG placeholders =====
     function svgChanterelle(){
       return `
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Chanterelle mushroom">
@@ -291,10 +309,28 @@
         <rect x="0" y="53.3" width="120" height="26.6" fill="#477050"/>
       </svg>`;
     }
+    function svgMap(){
+      return `
+      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" aria-label="Map">
+        <rect x="10" y="20" width="100" height="40" rx="6" fill="#a0c7ff"/>
+        <path d="M20 30 L30 25 L45 40 L60 30 L80 45 L100 35" stroke="#1f2a4d" stroke-width="3" fill="none"/>
+        <circle cx="45" cy="40" r="4" fill="#1f2a4d"/>
+      </svg>`;
+    }
+    function svgDumbbells(){
+      return `
+      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" aria-label="Dumbbells">
+        <rect x="30" y="36" width="60" height="8" rx="4" fill="#8a8f9a"/>
+        <rect x="22" y="30" width="8" height="20" rx="2" fill="#6e7380"/>
+        <rect x="90" y="30" width="8" height="20" rx="2" fill="#6e7380"/>
+      </svg>`;
+    }
 
-    // init
+    // ===== Kick off =====
     reset();
   })();
   </script>
 </body>
 </html>
+
+
