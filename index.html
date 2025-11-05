@@ -109,6 +109,10 @@
       II: { id:'II', type:'text', title:'Idealiserat Inflytande' },
       GM: { id:'GM', type:'text', title:'Growth Mindset' },
       FM: { id:'FM', type:'text', title:'Fixed Mindsset' },
+      N3: { id:'N3', type:'text', title:'3' },
+      N1: { id:'N1', type:'text', title:'1' },
+      APPR: { id:'APPR', type:'text', title:'Appreciative' },
+      INQ:  { id:'INQ',  type:'text', title:'Inquiry' },
 
       // Image pairs (SVG placeholders)
       CHANT: { id:'CHANT', type:'svg', render: svgChanterelle },
@@ -117,6 +121,8 @@
       HAMR:  { id:'HAMR',  type:'svg', render: svgHammer },
       CARR:  { id:'CARR',  type:'svg', render: svgCarriage },
       HUN:   { id:'HUN',   type:'svg', render: svgHungaryFlag },
+      MAP:   { id:'MAP',   type:'svg', render: svgMap },
+      DUMB:  { id:'DUMB',  type:'svg', render: svgDumbbells },
     };
 
     // Define combos and their popup messages
@@ -126,6 +132,9 @@
       ['LBELT','HAMR'],
       ['CARR','HUN'],
       ['GM','FM'],
+      ['N3','N1'],
+      ['MAP','DUMB'],
+      ['APPR','INQ'],
     ];
 
     const comboKey = (a,b)=> [a,b].sort().join('|');
@@ -134,9 +143,12 @@
     const ComboPopupText = new Map([
       [comboKey('TL','II'), `Hitta vad som driver och utvecklar varje individ. Anpassa ditt ledarskap utefter din grupp`],
       [comboKey('CHANT','EYE'), `Den inställningen du har till ett problem påverkar hur enkelt du löser ett problem`],
-      [comboKey('LBELT','HAMR'), `Vilka verktyg har du för att leda dina medarbetare, verktyg behövs slips och ersättas ibland.`],
+      [comboKey('LBELT','HAMR'), `Vilka verktyg har du för att leda dina medarbetare, verktyg behövs slipas och ersättas ibland.`],
       [comboKey('CARR','HUN'), `Coaching, medarbetaren kommer fram till sin egen lösning.`],
       [comboKey('GM','FM'), `Se möjligheter för att utvecklas, stanna inte i gamla vanor!`],
+      [comboKey('N3','N1'), `3 positivt tar ut 1 negativt`],
+      [comboKey('MAP','DUMB'), `Kartlägga styrkor, hitta dina egna styrkor och anpassa ditt ledarskap för att passa dig själv. Identifiera dina svagheter och kom fram till en förbättringsplan`],
+      [comboKey('APPR','INQ'), `Se problem från problem från en positiv infallsvinkel, då blir dom enklare att lösa`],
     ]);
 
     let first=null, second=null, lock=false, matches=0, moves=0, started=false, secs=0, timer=null;
@@ -157,6 +169,15 @@
     function renderCardContent(item){
       if(item.type==='text'){
         return `<div class="label">${item.title}</div>`;
+      }
+      if(item.type==='img' && item.src){
+        return `<div class="imgwrap"><img src="${item.src}" alt="${item.alt||''}" style="max-width:70%;max-height:70%"/></div>`;
+      }
+      if(item.type==='svg' && typeof item.render==='function'){
+        return `<div class="imgwrap">${item.render()}</div>`;
+      }
+      return '<div class="label">?</div>';
+    }</div>`;
       }
       if(item.type==='svg' && typeof item.render==='function'){
         return `<div class="imgwrap">${item.render()}</div>`;
@@ -291,8 +312,25 @@
         <rect x="0" y="53.3" width="120" height="26.6" fill="#477050"/>
       </svg>`;
     }
+    function svgMap(){
+      return `
+      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" aria-label="Map">
+        <rect x="10" y="20" width="100" height="40" rx="6" fill="#a0c7ff"/>
+        <path d="M20 30 L30 25 L45 40 L60 30 L80 45 L100 35" stroke="#1f2a4d" stroke-width="3" fill="none"/>
+        <circle cx="45" cy="40" r="4" fill="#1f2a4d"/>
+      </svg>`;
+    }
+    function svgDumbbells(){
+      return `
+      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" aria-label="Dumbbells">
+        <rect x="30" y="36" width="60" height="8" rx="4" fill="#8a8f9a"/>
+        <rect x="22" y="30" width="8" height="20" rx="2" fill="#6e7380"/>
+        <rect x="90" y="30" width="8" height="20" rx="2" fill="#6e7380"/>
+      </svg>`;
+    }
 
     // init
+    reset();
     reset();
   })();
   </script>
