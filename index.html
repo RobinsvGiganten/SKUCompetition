@@ -3,18 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Memory Match</title>
+  <title>Memory Match – Custom Combos</title>
   <style>
     :root{
-      --bg: #0f1221;
-      --panel: #151a2e;
-      --accent: #6ee7ff;
-      --accent-2: #a78bfa;
-      --text: #e6e9ff;
-      --muted: #9aa4bf;
-      --good: #5ee1a9;
-      --bad: #ff7a7a;
-      --card: #1b2140;
+      --bg: #0f1221; --panel: #151a2e; --text:#e6e9ff; --muted:#9aa4bf; --card:#1b2140;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -25,73 +17,34 @@
                   var(--bg);
       display:flex; flex-direction:column; align-items:center;
     }
-    header{
-      width:100%; max-width:1100px; padding:18px 20px; position:sticky; top:0; z-index:5;
-      backdrop-filter: blur(8px);
-    }
-    .bar{
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
-      background: color-mix(in oklab, var(--panel) 90%, transparent);
-      border:1px solid #2a335d; border-radius:16px; padding:12px 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    }
+    header{ width:100%; max-width:1100px; padding:18px 20px; position:sticky; top:0; z-index:5; backdrop-filter: blur(8px); }
+    .bar{ display:flex; gap:12px; align-items:center; justify-content:space-between; background: #101633cc; border:1px solid #2a335d; border-radius:16px; padding:12px 14px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
     .left, .right{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
     .badge{background:#0f1430; border:1px solid #2a335d; padding:8px 10px; border-radius:12px; color:var(--muted)}
     .badge b{color:var(--text)}
-    button, select{
-      appearance:none; border:none; border-radius:12px; padding:10px 14px; cursor:pointer;
-      background: linear-gradient(180deg, #2a335d, #232a4e); color:var(--text); font-weight:600;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 6px 16px rgba(0,0,0,.35);
-    }
+    button{ appearance:none; border:none; border-radius:12px; padding:10px 14px; cursor:pointer; background: linear-gradient(180deg, #2a335d, #232a4e); color:var(--text); font-weight:600; box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 6px 16px rgba(0,0,0,.35); }
     button:hover{filter:brightness(1.08)}
     button:active{transform:translateY(1px)}
-    select{padding-right:34px}
 
     main{width:100%; max-width:1100px; padding:16px 20px 40px}
-
-    .grid{
-      display:grid; gap:12px;
-      grid-template-columns: repeat(auto-fit, minmax(86px, 1fr));
-    }
-
-    .card{
-      aspect-ratio: 3/4; perspective:900px; position:relative; outline:none;
-    }
-    .card-inner{
-      position:absolute; inset:0; border-radius:16px; transform-style:preserve-3d; transition: transform .45s cubic-bezier(.2,.7,.2,1);
-    }
+    .grid{ display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+    .card{ aspect-ratio: 3/4; perspective:900px; position:relative; outline:none; }
+    .card-inner{ position:absolute; inset:0; border-radius:16px; transform-style:preserve-3d; transition: transform .45s cubic-bezier(.2,.7,.2,1); }
     .card.is-flipped .card-inner{ transform: rotateY(180deg); }
-    .face{
-      position:absolute; inset:0; display:grid; place-items:center; border-radius:16px; backface-visibility:hidden;
-      border:1px solid #2a335d; box-shadow: 0 10px 20px rgba(0,0,0,.35);
-    }
-    .front{
-      background: linear-gradient(180deg, #22284b, #1a1f3f);
-    }
-    .back{
-      background: linear-gradient(180deg, #202646, #1a1f3b);
-      transform: rotateY(180deg);
-    }
-    .symbol{font-size: clamp(28px, 5.6vw, 44px)}
-
+    .face{ position:absolute; inset:0; display:grid; place-items:center; border-radius:16px; backface-visibility:hidden; border:1px solid #2a335d; box-shadow: 0 10px 20px rgba(0,0,0,.35); }
+    .front{ background: linear-gradient(180deg, #22284b, #1a1f3f); }
+    .back{ background: linear-gradient(180deg, #202646, #1a1f3b); transform: rotateY(180deg); padding:12px; text-align:center }
+    .symbol{font-size: clamp(24px, 4.2vw, 38px)}
+    .label{font-weight:700; font-size: clamp(14px, 1.6vw, 18px)}
+    .sub{font-size:.9rem; opacity:.85}
+    .imgwrap{ width:100%; height:100%; display:grid; place-items:center }
+    .imgwrap svg{ width:70%; height:70% }
     .matched .front{ border-color: #2d9d7c; box-shadow: 0 10px 24px rgba(45,157,124,.35)}
-
     footer{opacity:.7; margin:24px 0 36px; font-size:.9rem}
-
-    /* Dialog */
-    dialog{ border:none; border-radius:20px; padding:0; color:var(--text);
-      background: linear-gradient(180deg, #1b2040, #12162e);
-      box-shadow: 0 30px 80px rgba(0,0,0,.45);
-      max-width: 500px; width: 92vw; }
+    dialog{ border:none; border-radius:20px; padding:0; color:var(--text); background: linear-gradient(180deg, #1b2040, #12162e); box-shadow: 0 30px 80px rgba(0,0,0,.45); max-width: 500px; width: 92vw; }
     .dlg-body{ padding:24px; }
     .dlg-actions{ display:flex; gap:10px; padding:16px 24px; background:#0f1430; border-top:1px solid #2a335d; justify-content:flex-end }
-
-    /* Accessibility helpers */
     .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0}
-
-    @media (min-width: 1200px){
-      .grid{ grid-template-columns: repeat(6, 1fr); }
-    }
   </style>
 </head>
 <body>
@@ -103,20 +56,13 @@
         <span class="badge" id="best">Best: <b>—</b></span>
       </div>
       <div class="right">
-        <label class="sr-only" for="size">Board size</label>
-        <select id="size" aria-label="Board size">
-          <option value="12">Easy (12 cards)</option>
-          <option value="16" selected>Normal (16 cards)</option>
-          <option value="20">Hard (20 cards)</option>
-          <option value="24">Insane (24 cards)</option>
-        </select>
         <button id="restart" type="button">Restart ↻</button>
       </div>
     </div>
   </header>
 
   <main>
-    <h1 class="sr-only">Memory Match Game</h1>
+    <h1 class="sr-only">Memory Match Game (Custom Combos)</h1>
     <div id="grid" class="grid" aria-live="polite"></div>
   </main>
 
@@ -132,7 +78,7 @@
   </dialog>
 
   <footer>
-    <p>Built with plain HTML/CSS/JS. Keyboard: Tab to focus, Enter/Space to flip.</p>
+    <p>Custom combos supported. Keyboard: Tab to focus, Enter/Space to flip.</p>
   </footer>
 
   <script>
@@ -141,44 +87,72 @@
     const movesEl = document.querySelector('#moves b');
     const timeEl = document.querySelector('#time b');
     const bestEl = document.querySelector('#best b');
-    const sizeSel = document.getElementById('size');
     const restartBtn = document.getElementById('restart');
     const dlg = document.getElementById('win');
     const playAgain = document.getElementById('playAgain');
     const closeWin = document.getElementById('closeWin');
 
-    // Emoji pool (pairs will be created from a slice of this)
-    const EMOJI = ['🐸','🦄','🦊','🐼','🐵','🐯','🦁','🐤','🐙','🐳','🐝','🦋','🌙','⭐','⚡','🔥','🍀','🍓','🍕','🥨','⚽','🎧','🎮','🎲','💎','🚀','🛸','🎯','🧩','💡'];
+    // === Content library ===
+    // Each item has a unique id and either text (title/subtitle) or an inline SVG renderer.
+    // You can swap renderers later for real images (img src) if you prefer.
+    const Items = {
+      // Text pair
+      TL: { id:'TL', type:'text', title:'Transformellt Ledarskap', subtitle:'' },
+      II: { id:'II', type:'text', title:'Idealiserat Inflytande', subtitle:'' },
 
-    let first=null, second=null, lock=false, matches=0, moves=0, started=false, secs=0, timer=null, totalCards=16;
+      // Image pairs (inline SVG placeholders so it works without assets)
+      MUSH: { id:'MUSH', type:'svg', render: svgMushroom },
+      EYE:  { id:'EYE',  type:'svg', render: svgEye },
+      BELT: { id:'BELT', type:'svg', render: svgBelt },
+      TOOLS:{ id:'TOOLS',type:'svg', render: svgHammerScrewdriver },
+      CARR: { id:'CARR', type:'svg', render: svgCarriage },
+      HUN:  { id:'HUN',  type:'svg', render: svgHungaryFlag },
+    };
 
-    function format(s){
-      const m = Math.floor(s/60).toString().padStart(2,'0');
-      const r = (s%60).toString().padStart(2,'0');
-      return `${m}:${r}`;
-    }
+    // Define combos as unordered pairs of item ids
+    const Combos = [
+      ['TL','II'],
+      ['MUSH','EYE'],
+      ['BELT','TOOLS'],
+      ['CARR','HUN'],
+    ];
 
-    function startTimer(){ if(timer) return; timer = setInterval(()=>{ secs++; timeEl.textContent = format(secs); }, 1000); }
+    // Build a Set of canonical pair keys for quick matching
+    const comboKey = (a,b)=> [a,b].sort().join('|');
+    const comboSet = new Set(Combos.map(([a,b])=>comboKey(a,b)));
+
+    let first=null, second=null, lock=false, matches=0, moves=0, started=false, secs=0, timer=null;
+    const totalCards = Combos.length * 2; // two cards per combo
+
+    function format(s){ const m=Math.floor(s/60).toString().padStart(2,'0'); const r=(s%60).toString().padStart(2,'0'); return `${m}:${r}`; }
+    function startTimer(){ if(timer) return; timer=setInterval(()=>{ secs++; timeEl.textContent=format(secs); }, 1000); }
     function stopTimer(){ clearInterval(timer); timer=null; }
-    function resetTimer(){ stopTimer(); secs=0; timeEl.textContent = '00:00'; }
+    function resetTimer(){ stopTimer(); secs=0; timeEl.textContent='00:00'; }
+    function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
 
-    function shuffle(arr){
-      for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
-      return arr;
-    }
-
-    function buildDeck(n){
-      const pairs = n/2;
-      const pick = shuffle(EMOJI.slice()).slice(0, pairs);
-      const deck = shuffle([...pick, ...pick]).map((sym, idx)=>({ id: idx+''+Math.random().toString(16).slice(2,6), sym, matched:false }));
+    function buildDeck(){
+      // From combos, create one card for each item in each pair
+      const ids = Combos.flat();
+      const deck = shuffle(ids.slice()).map((id, idx)=>({ key: id+':'+idx+Math.random().toString(16).slice(2,6), id }));
       return deck;
     }
 
+    function renderCardContent(item){
+      if(item.type==='text'){
+        return `<div class="label">${item.title}</div>${item.subtitle?`<div class="sub">${item.subtitle}</div>`:''}`;
+      }
+      if(item.type==='svg' && typeof item.render==='function'){
+        return `<div class="imgwrap">${item.render()}</div>`;
+      }
+      return '<div class="label">?</div>';
+    }
+
     function cardTemplate(card){
-      return `<button class="card" data-id="${card.id}" aria-label="Hidden card" aria-pressed="false">
+      const item = Items[card.id];
+      return `<button class="card" data-key="${card.key}" data-id="${card.id}" aria-label="Hidden card" aria-pressed="false">
         <div class="card-inner">
           <div class="face front" aria-hidden="true"></div>
-          <div class="face back"><div class="symbol" aria-hidden="true">${card.sym}</div></div>
+          <div class="face back">${renderCardContent(item)}</div>
         </div>
       </button>`;
     }
@@ -191,11 +165,7 @@
       });
     }
 
-    function setFlipped(btn, on){
-      btn.classList.toggle('is-flipped', on);
-      btn.setAttribute('aria-pressed', on?'true':'false');
-    }
-
+    function setFlipped(btn, on){ btn.classList.toggle('is-flipped', on); btn.setAttribute('aria-pressed', on?'true':'false'); }
     function bumpMoves(){ moves++; movesEl.textContent = moves; }
 
     function flip(btn){
@@ -205,18 +175,15 @@
       if(!first){ first = btn; return; }
       second = btn; lock=true; bumpMoves();
 
-      const sym1 = first.querySelector('.symbol')?.textContent;
-      const sym2 = second.querySelector('.symbol')?.textContent;
-      if(sym1 === sym2){
+      const id1 = first.getAttribute('data-id');
+      const id2 = second.getAttribute('data-id');
+      if(comboSet.has(comboKey(id1,id2))){
         first.classList.add('matched');
         second.classList.add('matched');
         first = second = null; lock=false; matches += 2;
         if(matches === totalCards){ win(); }
       } else {
-        setTimeout(()=>{
-          setFlipped(first, false); setFlipped(second, false);
-          first = second = null; lock=false;
-        }, 700);
+        setTimeout(()=>{ setFlipped(first,false); setFlipped(second,false); first=second=null; lock=false; }, 800);
       }
     }
 
@@ -224,7 +191,7 @@
       stopTimer();
       const stats = `Moves: ${moves} • Time: ${format(secs)}`;
       document.getElementById('winStats').textContent = stats;
-      const bestKey = `best_${totalCards}`;
+      const bestKey = `best_custom_${totalCards}`;
       const best = JSON.parse(localStorage.getItem(bestKey) || 'null');
       const current = { moves, secs };
       if(!best || current.moves < best.moves || (current.moves === best.moves && current.secs < best.secs)){
@@ -235,27 +202,80 @@
     }
 
     function updateBestLabel(){
-      const best = JSON.parse(localStorage.getItem(`best_${totalCards}`) || 'null');
+      const best = JSON.parse(localStorage.getItem(`best_custom_${totalCards}`) || 'null');
       bestEl.textContent = best ? `${best.moves} / ${format(best.secs)}` : '—';
     }
 
-    function reset(n){
-      totalCards = n;
+    function reset(){
       first=second=null; lock=false; matches=0; moves=0; started=false; movesEl.textContent = '0';
       resetTimer();
-      const deck = buildDeck(n);
-      render(deck);
+      render(buildDeck());
       updateBestLabel();
     }
 
-    // hooks
-    restartBtn.addEventListener('click', ()=> reset(totalCards));
-    sizeSel.addEventListener('change', e=> reset(parseInt(e.target.value,10)) );
-    playAgain.addEventListener('click', ()=>{ dlg.close(); reset(totalCards); });
+    restartBtn.addEventListener('click', reset);
+    playAgain.addEventListener('click', ()=>{ dlg.close(); reset(); });
     closeWin.addEventListener('click', ()=> dlg.close());
 
+    // ===== Inline SVG icon generators =====
+    function svgMushroom(){
+      return `
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Mushroom">
+        <defs><radialGradient id="g1"><stop offset="0%" stop-color="#ff9fb3"/><stop offset="100%" stop-color="#d14a68"/></radialGradient></defs>
+        <ellipse cx="50" cy="40" rx="36" ry="22" fill="url(#g1)"/>
+        <circle cx="35" cy="40" r="6" fill="#fff"/>
+        <circle cx="50" cy="32" r="7" fill="#fff"/>
+        <circle cx="65" cy="40" r="5" fill="#fff"/>
+        <rect x="42" y="40" width="16" height="26" rx="8" fill="#f4e7c6"/>
+      </svg>`;
+    }
+    function svgEye(){
+      return `
+      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" aria-label="Eye">
+        <path d="M10 40 Q60 5 110 40 Q60 75 10 40 Z" fill="#dde6ff"/>
+        <circle cx="60" cy="40" r="16" fill="#6aa2ff"/>
+        <circle cx="60" cy="40" r="8" fill="#2a335d"/>
+      </svg>`;
+    }
+    function svgBelt(){
+      return `
+      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" aria-label="Belt">
+        <rect x="10" y="34" width="100" height="12" rx="6" fill="#805d2a"/>
+        <rect x="40" y="28" width="20" height="24" rx="4" fill="#c9a24a"/>
+        <rect x="58" y="36" width="10" height="8" fill="#5a431b"/>
+      </svg>`;
+    }
+    function svgHammerScrewdriver(){
+      return `
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Hammer and Screwdriver">
+        <rect x="60" y="20" width="10" height="60" rx="3" fill="#d07a2a"/>
+        <polygon points="65,10 75,20 55,20" fill="#8a8f9a"/>
+        <rect x="30" y="40" width="8" height="40" rx="3" fill="#d07a2a"/>
+        <rect x="28" y="30" width="12" height="10" fill="#8a8f9a"/>
+      </svg>`;
+    }
+    function svgCarriage(){
+      return `
+      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" aria-label="Carriage">
+        <rect x="20" y="28" width="60" height="24" rx="6" fill="#6aa2ff"/>
+        <rect x="32" y="18" width="36" height="14" rx="6" fill="#a8c8ff"/>
+        <circle cx="36" cy="58" r="8" fill="#2a335d"/>
+        <circle cx="36" cy="58" r="3" fill="#dde6ff"/>
+        <circle cx="64" cy="58" r="8" fill="#2a335d"/>
+        <circle cx="64" cy="58" r="3" fill="#dde6ff"/>
+      </svg>`;
+    }
+    function svgHungaryFlag(){
+      return `
+      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" aria-label="Hungary">
+        <rect x="0" y="0" width="120" height="80" fill="#fff"/>
+        <rect x="0" y="0" width="120" height="26.6" fill="#ce2939"/>
+        <rect x="0" y="53.3" width="120" height="26.6" fill="#477050"/>
+      </svg>`;
+    }
+
     // init
-    reset(totalCards);
+    reset();
   })();
   </script>
 </body>
