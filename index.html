@@ -1,381 +1,262 @@
-
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<title>Sku and Leaderboard</title>
-<style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Memory Match</title>
+  <style>
+    :root{
+      --bg: #0f1221;
+      --panel: #151a2e;
+      --accent: #6ee7ff;
+      --accent-2: #a78bfa;
+      --text: #e6e9ff;
+      --muted: #9aa4bf;
+      --good: #5ee1a9;
+      --bad: #ff7a7a;
+      --card: #1b2140;
     }
-    .container {
-      display: flex;
-      justify-content: space-between;
-      padding: 50px;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif; color:var(--text);
+      background: radial-gradient(1200px 800px at 20% 0%, #1a1f3a, transparent),
+                  radial-gradient(1200px 800px at 100% 0%, #122035, transparent),
+                  var(--bg);
+      display:flex; flex-direction:column; align-items:center;
     }
-    .main-content, .leaderboard {
-      background-color: #fff;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    header{
+      width:100%; max-width:1100px; padding:18px 20px; position:sticky; top:0; z-index:5;
+      backdrop-filter: blur(8px);
     }
-    .main-content {
-      flex: 2;
-      margin-right: 20px;
+    .bar{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      background: color-mix(in oklab, var(--panel) 90%, transparent);
+      border:1px solid #2a335d; border-radius:16px; padding:12px 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
     }
-    .leaderboard {
-      flex: 1;
-      border-left: 2px solid #ccc;
+    .left, .right{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .badge{background:#0f1430; border:1px solid #2a335d; padding:8px 10px; border-radius:12px; color:var(--muted)}
+    .badge b{color:var(--text)}
+    button, select{
+      appearance:none; border:none; border-radius:12px; padding:10px 14px; cursor:pointer;
+      background: linear-gradient(180deg, #2a335d, #232a4e); color:var(--text); font-weight:600;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 6px 16px rgba(0,0,0,.35);
     }
-    .number-box {
-      border: 1px solid #ccc;
-      padding: 20px;
-      margin-bottom: 20px;
+    button:hover{filter:brightness(1.08)}
+    button:active{transform:translateY(1px)}
+    select{padding-right:34px}
+
+    main{width:100%; max-width:1100px; padding:16px 20px 40px}
+
+    .grid{
+      display:grid; gap:12px;
+      grid-template-columns: repeat(auto-fit, minmax(86px, 1fr));
     }
-    .number {
-      font-size: 24px;
-      font-weight: bold;
+
+    .card{
+      aspect-ratio: 3/4; perspective:900px; position:relative; outline:none;
     }
-    .points {
-      font-size: 18px;
-      color: #555;
+    .card-inner{
+      position:absolute; inset:0; border-radius:16px; transform-style:preserve-3d; transition: transform .45s cubic-bezier(.2,.7,.2,1);
     }
-    h1, h2 {
-      text-align: center;
+    .card.is-flipped .card-inner{ transform: rotateY(180deg); }
+    .face{
+      position:absolute; inset:0; display:grid; place-items:center; border-radius:16px; backface-visibility:hidden;
+      border:1px solid #2a335d; box-shadow: 0 10px 20px rgba(0,0,0,.35);
     }
-    ul {
-      list-style: none;
-      padding: 0;
+    .front{
+      background: linear-gradient(180deg, #22284b, #1a1f3f);
     }
-    li {
-      font-size: 18px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
+    .back{
+      background: linear-gradient(180deg, #202646, #1a1f3b);
+      transform: rotateY(180deg);
     }
-    form {
-      margin-top: 20px;
-      display: none;
-    }
-    input {
-      margin: 5px;
-      padding: 5px;
-    }
-    button {
-      padding: 5px 10px;
-      margin-top: 10px;
-    }
-    .toggle-btn {
-      display: block;
-      margin: 10px auto;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      cursor: pointer;
+    .symbol{font-size: clamp(28px, 5.6vw, 44px)}
+
+    .matched .front{ border-color: #2d9d7c; box-shadow: 0 10px 24px rgba(45,157,124,.35)}
+
+    footer{opacity:.7; margin:24px 0 36px; font-size:.9rem}
+
+    /* Dialog */
+    dialog{ border:none; border-radius:20px; padding:0; color:var(--text);
+      background: linear-gradient(180deg, #1b2040, #12162e);
+      box-shadow: 0 30px 80px rgba(0,0,0,.45);
+      max-width: 500px; width: 92vw; }
+    .dlg-body{ padding:24px; }
+    .dlg-actions{ display:flex; gap:10px; padding:16px 24px; background:#0f1430; border-top:1px solid #2a335d; justify-content:flex-end }
+
+    /* Accessibility helpers */
+    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0}
+
+    @media (min-width: 1200px){
+      .grid{ grid-template-columns: repeat(6, 1fr); }
     }
   </style>
-<style>
-body {
-  font-family: 'Comic Sans MS', cursive, sans-serif;
-  background: linear-gradient(to right, #f4f4f4, #e0ffe0);
-  margin: 0;
-  padding: 0;
-}
-
-.container {
-  display: flex;
-  justify-content: space-between;
-  padding: 50px;
-}
-
-.main-content, .leaderboard {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-.main-content {
-  flex: 2;
-  margin-right: 20px;
-}
-
-.leaderboard {
-  flex: 1;
-  border-left: 5px dashed #78be20;
-}
-
-.number-box {
-  border: 2px solid #78be20;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  transition: transform 0.3s ease;
-  background-color: #f9fff9;
-}
-
-.number-box:hover {
-  transform: scale(1.03);
-  background-color: #eaffea;
-}
-
-.number {
-  font-size: 28px;
-  font-weight: bold;
-  color: #00205b;
-}
-
-.points {
-  font-size: 20px;
-  color: #555;
-}
-
-h1, h2 {
-  text-align: center;
-  color: #00205b;
-  font-size: 32px;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  font-size: 20px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  background-color: #f0f8ff;
-  padding: 10px;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
-}
-
-li:hover {
-  background-color: #d0f0d0;
-}
-
-form {
-  margin-top: 20px;
-  display: none;
-}
-
-input {
-  margin: 5px;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-button {
-  padding: 8px 12px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #78be20;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #c4d600;
-}
-
-.toggle-btn {
-  display: block;
-  margin: 10px auto;
-  background-color: #00205b;
-  color: white;
-  border: none;
-  cursor: pointer;
-  padding: 10px 15px;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
-}
-
-.toggle-btn:hover {
-  background-color: #0040a0;
-}
-</style><style>
-.tvatt-field {
-    margin-left: 20px;
-    font-weight: bold;
-    color: #8DC63F;
-    font-size: 1.2em;
-}
-</style></head>
+</head>
 <body>
-<div class="container">
-<div class="main-content">
-<h1>Points Overview</h1>
-<div id="numbers">
-<div class="number-box">
-<div class="number">419960: Cylinda Diskmaskin DM3220D (vit)</div>
-<div class="points">Points: 25</div>
-<div><a href="https://www.elgiganten.se/product/outlet/cylinda-diskmaskin-dm3220d-vit/419960" target="_blank">Link</a></div>
-<div>Lowest Price: 4956</div>
-</div>
-<div class="number-box">
-<div class="number">937176: Cylinda Tvättmaskin FT4494MA (9kg)</div>
-<div class="points">Points: 25</div>
-<div><a href="https://www.elgiganten.se/product/outlet/cylinda-tvattmaskin-ft4494ma-9kg/937176" target="_blank">Link</a></div>
-<div>Lowest Price: 8995</div>
-</div>
-<div class="number-box">
-<div class="number">892980: Electrolux Serie 700 Torktumlare EDI7H1E85E (8kg)</div>
-<div class="points">Points: 35</div>
-<div><a href="https://www.elgiganten.se/product/outlet/electrolux-serie-700-torktumlare-edi7h1e85e-8kg/892980" target="_blank">Link</a></div>
-<div>Lowest Price: 8995</div>
-</div>
-<div class="number-box">
-<div class="number">200612: Miele Induktionshäll KM7575FL (80cm)</div>
-<div class="points">Points: 100</div>
-<div><a href="https://www.elgiganten.se/product/outlet/miele-induktionshall-km7575fl-80cm/200612" target="_blank">Link</a></div>
-<div>Lowest Price: 19496</div>
-</div>
-</div>
-</div>
-<div class="leaderboard">
-<h2>Leaderboard</h2><button class="toggle-btn" onclick="sortLeaderboard()">Sort Leaderboard</button>
-<ul id="leaderboardList">
-<li><span>Robin</span><span>155</span></li>
-<li><span>Adnan</span><span>165</span></li>
-<li><span>Gente</span><span>0</span></li>
-<li><span>Moa</span><span>0</span></li>
-<li><span>Lukas</span><span>25</span></li>
-<li><span>Alfred</span><span>30</span></li>
-<li><span>Anton</span><span>80</span></li>
-<li><span>Adam</span><span>0</span></li>
-<li><span>William</span><span>0</span></li>
-</ul>
-</div>
-</div>
-<script>
-function sortLeaderboard() {
-  const leaderboardList = document.getElementById('leaderboardList');
-  let entries = Array.from(leaderboardList.children).map(li => ({
-    name: li.children[0].textContent,
-    score: parseInt(li.children[1].textContent)
-  }));
+  <header>
+    <div class="bar" role="toolbar" aria-label="Game controls">
+      <div class="left">
+        <span class="badge" id="moves">Moves: <b>0</b></span>
+        <span class="badge" id="time">Time: <b>00:00</b></span>
+        <span class="badge" id="best">Best: <b>—</b></span>
+      </div>
+      <div class="right">
+        <label class="sr-only" for="size">Board size</label>
+        <select id="size" aria-label="Board size">
+          <option value="12">Easy (12 cards)</option>
+          <option value="16" selected>Normal (16 cards)</option>
+          <option value="20">Hard (20 cards)</option>
+          <option value="24">Insane (24 cards)</option>
+        </select>
+        <button id="restart" type="button">Restart ↻</button>
+      </div>
+    </div>
+  </header>
 
-  entries.sort((a, b) => b.score - a.score);
+  <main>
+    <h1 class="sr-only">Memory Match Game</h1>
+    <div id="grid" class="grid" aria-live="polite"></div>
+  </main>
 
-  leaderboardList.innerHTML = '';
-  entries.forEach(entry => {
-    const li = document.createElement('li');
-    li.innerHTML = `<span>${entry.name}</span><span>${entry.score}</span>`;
-    leaderboardList.appendChild(li);
-  });
-}
-</script>
-<script>
-    function toggleForm(formId) {
-      const form = document.getElementById(formId);
-      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  <dialog id="win">
+    <div class="dlg-body">
+      <h2>🎉 Nice! You cleared the board</h2>
+      <p id="winStats">You finished in 0 moves.</p>
+    </div>
+    <div class="dlg-actions">
+      <button id="playAgain">Play again</button>
+      <button id="closeWin">Close</button>
+    </div>
+  </dialog>
+
+  <footer>
+    <p>Built with plain HTML/CSS/JS. Keyboard: Tab to focus, Enter/Space to flip.</p>
+  </footer>
+
+  <script>
+  (()=>{
+    const grid = document.getElementById('grid');
+    const movesEl = document.querySelector('#moves b');
+    const timeEl = document.querySelector('#time b');
+    const bestEl = document.querySelector('#best b');
+    const sizeSel = document.getElementById('size');
+    const restartBtn = document.getElementById('restart');
+    const dlg = document.getElementById('win');
+    const playAgain = document.getElementById('playAgain');
+    const closeWin = document.getElementById('closeWin');
+
+    // Emoji pool (pairs will be created from a slice of this)
+    const EMOJI = ['🐸','🦄','🦊','🐼','🐵','🐯','🦁','🐤','🐙','🐳','🐝','🦋','🌙','⭐','⚡','🔥','🍀','🍓','🍕','🥨','⚽','🎧','🎮','🎲','💎','🚀','🛸','🎯','🧩','💡'];
+
+    let first=null, second=null, lock=false, matches=0, moves=0, started=false, secs=0, timer=null, totalCards=16;
+
+    function format(s){
+      const m = Math.floor(s/60).toString().padStart(2,'0');
+      const r = (s%60).toString().padStart(2,'0');
+      return `${m}:${r}`;
     }
 
-    const leaderboardForm = document.getElementById('leaderboardForm');
-    const leaderboardList = document.getElementById('leaderboardList');
+    function startTimer(){ if(timer) return; timer = setInterval(()=>{ secs++; timeEl.textContent = format(secs); }, 1000); }
+    function stopTimer(){ clearInterval(timer); timer=null; }
+    function resetTimer(){ stopTimer(); secs=0; timeEl.textContent = '00:00'; }
 
-    leaderboardForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const name = document.getElementById('name').value.trim();
-      const score = parseInt(document.getElementById('score').value);
-      const password = document.getElementById('leaderboardPassword').value;
+    function shuffle(arr){
+      for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+      return arr;
+    }
 
-      if (password !== 'outpost') {
-        alert('Incorrect password');
-        return;
-      }
+    function buildDeck(n){
+      const pairs = n/2;
+      const pick = shuffle(EMOJI.slice()).slice(0, pairs);
+      const deck = shuffle([...pick, ...pick]).map((sym, idx)=>({ id: idx+''+Math.random().toString(16).slice(2,6), sym, matched:false }));
+      return deck;
+    }
 
-      if (!name || isNaN(score)) {
-        alert('Please enter a valid name and score.');
-        return;
-      }
+    function cardTemplate(card){
+      return `<button class="card" data-id="${card.id}" aria-label="Hidden card" aria-pressed="false">
+        <div class="card-inner">
+          <div class="face front" aria-hidden="true"></div>
+          <div class="face back"><div class="symbol" aria-hidden="true">${card.sym}</div></div>
+        </div>
+      </button>`;
+    }
 
-      let entries = Array.from(leaderboardList.children).map(li => ({
-        name: li.children[0].textContent,
-        score: parseInt(li.children[1].textContent)
-      }));
+    function render(deck){
+      grid.innerHTML = deck.map(cardTemplate).join('');
+      grid.querySelectorAll('.card').forEach(btn=>{
+        btn.addEventListener('click', ()=> flip(btn));
+        btn.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); flip(btn); }});
+      });
+    }
 
-      const existing = entries.find(entry => entry.name.toLowerCase() === name.toLowerCase());
-      if (existing) {
-        existing.score = score;
+    function setFlipped(btn, on){
+      btn.classList.toggle('is-flipped', on);
+      btn.setAttribute('aria-pressed', on?'true':'false');
+    }
+
+    function bumpMoves(){ moves++; movesEl.textContent = moves; }
+
+    function flip(btn){
+      if(lock) return; if(btn.classList.contains('is-flipped')) return;
+      setFlipped(btn, true);
+      if(!started){ started=true; startTimer(); }
+      if(!first){ first = btn; return; }
+      second = btn; lock=true; bumpMoves();
+
+      const sym1 = first.querySelector('.symbol')?.textContent;
+      const sym2 = second.querySelector('.symbol')?.textContent;
+      if(sym1 === sym2){
+        first.classList.add('matched');
+        second.classList.add('matched');
+        first = second = null; lock=false; matches += 2;
+        if(matches === totalCards){ win(); }
       } else {
-        entries.push({ name, score });
+        setTimeout(()=>{
+          setFlipped(first, false); setFlipped(second, false);
+          first = second = null; lock=false;
+        }, 700);
       }
+    }
 
-      entries.sort((a, b) => b.score - a.score);
-      const top10 = entries.slice(0, 10);
-
-      leaderboardList.innerHTML = '';
-      top10.forEach(entry => {
-        const li = document.createElement('li');
-        li.innerHTML = `<span>${entry.name}</span><span>${entry.score}</span>`;
-        leaderboardList.appendChild(li);
-      });
-
-      leaderboardForm.reset();
-    });
-
-    const updateNumbersForm = document.getElementById('updateNumbersForm');
-    const numbersDiv = document.getElementById('numbers');
-
-    updateNumbersForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const password = document.getElementById('numPassword').value;
-      if (password !== 'outpost') {
-        alert('Incorrect password');
-        return;
+    function win(){
+      stopTimer();
+      const stats = `Moves: ${moves} • Time: ${format(secs)}`;
+      document.getElementById('winStats').textContent = stats;
+      const bestKey = `best_${totalCards}`;
+      const best = JSON.parse(localStorage.getItem(bestKey) || 'null');
+      const current = { moves, secs };
+      if(!best || current.moves < best.moves || (current.moves === best.moves && current.secs < best.secs)){
+        localStorage.setItem(bestKey, JSON.stringify(current));
       }
+      updateBestLabel();
+      dlg.showModal();
+    }
 
-      const nums = [
-        {
-          number: document.getElementById('num1').value,
-          points: document.getElementById('points1').value,
-          link: document.getElementById('link1').value,
-          price: document.getElementById('price1').value
-        },
-        {
-          number: document.getElementById('num2').value,
-          points: document.getElementById('points2').value,
-          link: document.getElementById('link2').value,
-          price: document.getElementById('price2').value
-        },
-        {
-          number: document.getElementById('num3').value,
-          points: document.getElementById('points3').value,
-          link: document.getElementById('link3').value,
-          price: document.getElementById('price3').value
-        },
-        {
-          number: document.getElementById('num4').value,
-          points: document.getElementById('points4').value,
-          link: document.getElementById('link4').value,
-          price: document.getElementById('price4').value
-        }
-      ];
+    function updateBestLabel(){
+      const best = JSON.parse(localStorage.getItem(`best_${totalCards}`) || 'null');
+      bestEl.textContent = best ? `${best.moves} / ${format(best.secs)}` : '—';
+    }
 
-      numbersDiv.innerHTML = '';
-      nums.forEach(n => {
-        const box = document.createElement('div');
-        box.className = 'number-box';
-        box.innerHTML = `
-          <div class="number">${n.number}</div>
-          <div class="points">Points: ${n.points}</div>
-          <div><a href="${n.link}" target="_blank">Link</a></div>
-          <div>Lowest Price: ${n.price}</div>
-        `;
-        numbersDiv.appendChild(box);
-      });
+    function reset(n){
+      totalCards = n;
+      first=second=null; lock=false; matches=0; moves=0; started=false; movesEl.textContent = '0';
+      resetTimer();
+      const deck = buildDeck(n);
+      render(deck);
+      updateBestLabel();
+    }
 
-      updateNumbersForm.reset();
-    });
-  </script><div class="entry-box" style="margin-top: 30px; background-color: #f0f8ff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"><h2 style="font-family: 'Fredoka One', sans-serif; color: #006341; margin-bottom: 10px;">Pristabell 🏆</h2><p style="font-size: 1.2em; line-height: 1.6; color: #333;">🥤 För var 150e poäng oavsett placering har man vunnit en dricka.
-🎁 Vinnaren av leaderboarden varje period får ett roligare pris, beroende på tillgång och årstid.</p></div></body>
+    // hooks
+    restartBtn.addEventListener('click', ()=> reset(totalCards));
+    sizeSel.addEventListener('change', e=> reset(parseInt(e.target.value,10)) );
+    playAgain.addEventListener('click', ()=>{ dlg.close(); reset(totalCards); });
+    closeWin.addEventListener('click', ()=> dlg.close());
+
+    // init
+    reset(totalCards);
+  })();
+  </script>
+</body>
 </html>
